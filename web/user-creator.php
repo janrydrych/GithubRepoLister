@@ -31,7 +31,7 @@ $auth = new Auth(new PDO($dic->get('authDSN'), $dic->get('authUser'), $dic->get(
 
 foreach ($newUsers as $user) {
 	$userId = $auth->admin()->createUser($user['email'], $user['password'], $user['username']);
-	echo 'User ' . $username . ' has been created with ID:' . $userId . '<br>';
+	echo 'User ' . $user['username'] . ' has been created...<br>';
 }
 
 
