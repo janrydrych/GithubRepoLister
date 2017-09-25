@@ -1,0 +1,12 @@
+{
+    "require": {
+        "knplabs/github-api": "^2.5",
+        "php-http/guzzle6-adapter": "^1.1",
+        "delight-im/auth": "^6.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "GRL\\" : "src/"
+        }
+    }
+}

@@ -1,0 +1,7 @@
+/data/*
+!/data/.htaccess
+vendor
+!vendor/.htaccess
+.idea
+.lock
+composer.lock
