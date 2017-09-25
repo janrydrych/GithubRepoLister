@@ -12,7 +12,7 @@ Gets Github repo list and logs each search.
  1. Include the library via Composer :
 
     ```
-    $ composer require janrydrych/github-repo-lister
+    $ composer create-project janrydrych/github-repo-lister .
     ```
 
  1. Configuration directives can be changed in the [Configuration](src/Configuration.php) class. Feel free to modify it according to your needs and desired database platform.
