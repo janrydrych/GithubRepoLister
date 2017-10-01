@@ -5,8 +5,8 @@
 namespace GRL\Storage;
 
 use \PDO;
-use \Exception;
 use \DateTime;
+use \RuntimeException;
 
 /**
  * Data storage for storing/retrieving data
@@ -26,7 +26,7 @@ class DataStorage implements DataStorageInterface
 	 * DataStorage constructor.
 	 *
 	 * @param PDO $pdo
-	 * @throws Exception
+	 * @throws RuntimeException
 	 */
 	public function __construct(PDO $pdo)
 	{
@@ -34,8 +34,8 @@ class DataStorage implements DataStorageInterface
 
 		$result = $this->initSearchLogTable();
 		if ($result === false) {
-			throw new Exception('Searches table initialization error');
-		};
+			throw new RuntimeException('Searches table initialization error');
+		}
 	}
 
 	/**
@@ -44,23 +44,22 @@ class DataStorage implements DataStorageInterface
 	 *
 	 * @return bool
 	 */
-	private function tableExists(string $name)
+	private function tableExists(string $name): bool
 	{
 		$result = $this->pdo->query("SELECT 1 FROM ".$name." LIMIT 1");
 		return $result !== false;
 	}
 
 	/**
-	 * Initialize search log table if not present
-	 *
+	 * Initialize search log table in the storage
 	 * @return bool
 	 */
-	private function initSearchLogTable()
+	private function initSearchLogTable(): bool
 	{
-		if ($this->tableExists(self::SEARCH_LOG_TABLE_NAME)) return true;
+		if ($this->tableExists(self::SEARCH_LOG_TABLE_NAME)) { return true; }
 
 		$result = $this->pdo->query("CREATE TABLE ".self::SEARCH_LOG_TABLE_NAME." (datetime TEXT NOT NULL, uri TEXT NOT NULL, ip_address TEXT)");
-		if ($result === false) return $result;
+		if ($result === false) { return $result; }
 		$result = $this->pdo->query("CREATE INDEX idx_datetime ON ".self::SEARCH_LOG_TABLE_NAME."(datetime)");
 		return $result !== false;
 	}
@@ -74,7 +73,7 @@ class DataStorage implements DataStorageInterface
 	 *
 	 * @return bool
 	 */
-	public function saveSearchEvent(DateTime $dateTime, string $uri, string $ipAddress)
+	public function saveSearchEvent(DateTime $dateTime, string $uri, string $ipAddress): bool
 	{
 		$dateTimeStr = $dateTime->format('Y-m-d H:i:s');
 		$sth = $this->pdo->prepare("INSERT INTO ".self::SEARCH_LOG_TABLE_NAME." (datetime, uri, ip_address) VALUES (:datetime, :uri, :ip_address)");
@@ -122,7 +121,7 @@ class DataStorage implements DataStorageInterface
 	 *
 	 * @return bool
 	 */
-	public function deleteSearchLogs(int $hoursAgo)
+	public function deleteSearchLogs(int $hoursAgo): bool
 	{
 		$thresholdDatetime = new DateTime('-'.$hoursAgo.' hours');
 		$dateTimeStr = $thresholdDatetime->format('Y-m-d H:i:s');

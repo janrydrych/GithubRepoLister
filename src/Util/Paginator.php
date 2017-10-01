@@ -15,49 +15,49 @@ class Paginator
 
     /**
      * First page (base) number
-     * @var integer
+     * @var int
      */
     private $base = 1;
 
     /**
      * Number of items to display on one page
-     * @var integer
+     * @var int
      */
     private $itemsPerPage;
 
     /**
-     * @var integer
+     * @var int
      */
     private $currentPage;
 
     /**
      * Number of items to paginate
-     * @var integer|null
+     * @var int|null
      */
     private $itemCount;
 
     /**
      * Number of buttons before and after actual page button
-     * @var integer
+     * @var int
      */
     private $stepsAroundCurrentPage;
 
     /**
-    * @param integer $itemsPerPage
-    * @param integer $stepsAroundCurrentPage
+    * @param int $itemsPerPage
+    * @param int $stepsAroundCurrentPage
     */
     public function __construct(int $itemsPerPage = null, int $stepsAroundCurrentPage = null)
     {
-    	(isset($itemsPerPage)) ? $this->setItemsPerPage($itemsPerPage) : $this->itemsPerPage = self::DEFAULT_ITEMS_PER_PAGE;
-	    (isset($stepsAroundCurrentPage)) ? $this->setStepsAroundCurrentPage($stepsAroundCurrentPage) : $this->stepsAroundCurrentPage = self::DEFAULT_STEPS_AROUND_CURRENT_PAGE;
+    	isset($itemsPerPage) ? $this->setItemsPerPage($itemsPerPage) : $this->itemsPerPage = self::DEFAULT_ITEMS_PER_PAGE;
+	    isset($stepsAroundCurrentPage) ? $this->setStepsAroundCurrentPage($stepsAroundCurrentPage) : $this->stepsAroundCurrentPage = self::DEFAULT_STEPS_AROUND_CURRENT_PAGE;
     }
 
     /**
      * Sets first page (base) number.
      *
-     * @param integer $base
+     * @param int $base
      *
-     * @return self
+     * @return $this
      */
     public function setBase($base)
     {
@@ -68,9 +68,9 @@ class Paginator
     /**
      * Returns first page (base) number.
      *
-     * @return integer
+     * @return int
      */
-    public function getBase()
+    public function getBase(): int
     {
         return $this->base;
     }
@@ -78,9 +78,9 @@ class Paginator
     /**
      * Sets the number of items to display on a single page.
      *
-     * @param integer $itemsPerPage
+     * @param int $itemsPerPage
      *
-     * @return self
+     * @return $this
      */
     public function setItemsPerPage($itemsPerPage)
     {
@@ -91,9 +91,9 @@ class Paginator
     /**
      * Returns the number of items to display on a single page.
      *
-     * @return integer
+     * @return int
      */
-    public function getItemsPerPage()
+    public function getItemsPerPage(): int
     {
         return $this->itemsPerPage;
     }
@@ -101,9 +101,9 @@ class Paginator
     /**
      * Sets the number of buttons around actual page button
      *
-     * @param integer $stepsAroundCurrentPage
+     * @param int $stepsAroundCurrentPage
      *
-     * @return self
+     * @return $this
      */
     public function setStepsAroundCurrentPage($stepsAroundCurrentPage)
     {
@@ -114,9 +114,9 @@ class Paginator
     /**
      * Returns the number of buttons around actual page button
      *
-     * @return integer
+     * @return int
      */
-    public function getStepsAroundCurrentPage()
+    public function getStepsAroundCurrentPage(): int
     {
         return $this->stepsAroundCurrentPage;
     }
@@ -124,9 +124,9 @@ class Paginator
     /**
      * Sets the total number of items.
      *
-     * @param  integer (or null as infinity)
+     * @param  int (or null as infinity)
      *
-     * @return self
+     * @return $this
      */
     public function setItemCount($itemCount)
     {
@@ -141,7 +141,7 @@ class Paginator
     /**
      * Returns the total number of items.
      *
-     * @return integer|null
+     * @return int|null
      */
     public function getItemCount()
     {
@@ -151,9 +151,9 @@ class Paginator
     /**
      * Sets current page number.
      *
-     * @param integer $currentPage
+     * @param int $currentPage
      *
-     * @return self
+     * @return $this
      */
     public function setCurrentPage($currentPage)
     {
@@ -164,9 +164,9 @@ class Paginator
     /**
      * Returns current page number.
      *
-     * @return integer
+     * @return int
      */
-    public function getCurrentPage()
+    public function getCurrentPage(): int
     {
         return $this->base + $this->getPageIndex();
     }
@@ -174,9 +174,9 @@ class Paginator
     /**
      * Returns first page number.
      *
-     * @return integer
+     * @return int
      */
-    public function getFirstPage()
+    public function getFirstPage(): int
     {
         return $this->base;
     }
@@ -184,9 +184,9 @@ class Paginator
     /**
      * Returns previous page number.
      *
-     * @return integer
+     * @return int
      */
-    public function getPreviousPage()
+    public function getPreviousPage(): int
     {
         if ($this->itemCount === null) {
             return null;
@@ -198,9 +198,9 @@ class Paginator
     /**
      * Returns next page number.
      *
-     * @return integer|null
+     * @return int
      */
-    public function getNextPage()
+    public function getNextPage(): int
     {
         if ($this->itemCount === null) {
             return null;
@@ -212,9 +212,9 @@ class Paginator
     /**
      * Returns last page number.
      *
-     * @return integer|null
+     * @return int
      */
-    public function getLastPage()
+    public function getLastPage(): int
     {
         if ($this->itemCount === null) {
             return null;
@@ -226,9 +226,9 @@ class Paginator
     /**
      * Returns zero-based page number.
      *
-     * @return integer
+     * @return int
      */
-    protected function getPageIndex()
+    protected function getPageIndex(): int
     {
         $index = max(0, $this->currentPage - $this->base);
         if ($this->itemCount === null) {
@@ -241,9 +241,9 @@ class Paginator
     /**
      * Is the current page the first one?
      *
-     * @return boolean
+     * @return bool
      */
-    public function isFirstPage()
+    public function isFirstPage(): bool
     {
         return $this->getPageIndex() === 0;
     }
@@ -251,9 +251,9 @@ class Paginator
     /**
      * Is the current page the last one?
      *
-     * @return boolean
+     * @return bool
      */
-    public function isLastPage()
+    public function isLastPage(): bool
     {
         if ($this->itemCount === null) {
             return false;
@@ -265,9 +265,9 @@ class Paginator
     /**
      * Returns the total number of pages.
      *
-     * @return integer|null
+     * @return int
      */
-    public function getPageCount()
+    public function getPageCount(): int
     {
         if ($this->itemCount === null) {
             return null;
@@ -279,9 +279,9 @@ class Paginator
     /**
      * Returns the absolute index of the first item on current page.
      *
-     * @return integer
+     * @return int
      */
-    public function getOffset()
+    public function getOffset(): int
     {
         return $this->getPageIndex() * $this->itemsPerPage;
     }
@@ -289,9 +289,9 @@ class Paginator
     /**
      * Returns the absolute index of the first item on current page in countdown paging.
      *
-     * @return integer|null
+     * @return int
      */
-    public function getCountdownOffset()
+    public function getCountdownOffset(): int
     {
         if ($this->itemCount === null) {
             return null;
@@ -303,9 +303,9 @@ class Paginator
     /**
      * Returns the number of items on current page.
      *
-     * @return integer|null
+     * @return int
      */
-    public function getItemCountForCurrentPage()
+    public function getItemCountForCurrentPage(): int
     {
         if ($this->itemCount === null) {
             return $this->itemsPerPage;
@@ -317,9 +317,9 @@ class Paginator
     /**
      * Returns array of steps
      *
-     * @return array|null
+     * @return array
      */
-    public function getSteps()
+    public function getSteps(): array
     {
         if ($this->getPageCount() < 2) {
             return null;

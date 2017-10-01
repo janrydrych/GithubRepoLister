@@ -4,11 +4,10 @@
  */
 namespace GRL;
 
-use Delight\Auth\Auth;
-use GRL\Storage\DataStorageInterface;
+use GRL\Configuration\Configuration;
+use GRL\Configuration\Services;
+use \InvalidArgumentException;
 use GRL\Util\FlashMessages;
-use GRL\Util\Paginator;
-
 /**
  * Description
  *
@@ -19,7 +18,12 @@ class DIC
 	/**
 	 * @var array
 	 */
-	private $dic = array();
+	private $parameters;
+
+	/**
+	 * @var array
+	 */
+	private $services = array();
 
 	/**
 	 * @var bool
@@ -29,25 +33,32 @@ class DIC
 	/**
 	 * DIC constructor.
 	 *
-	 * @param array|null $configuration
+	 * @param Configuration $configuration
+	 * @param Services $services
 	 */
-	public function __construct(array $configuration = null)
+	public function __construct(Configuration $configuration = null, Services $services = null)
 	{
-		$this->dic = $configuration ?: array();
+		if (isset($configuration)) {
+			$this->initializeDIC($configuration, $services);
+			$this->setInitialized();
+		}
 	}
 
 	/**
-	 * Check if DIC is already initialized
+	 * Initialize DIC
 	 *
-	 * @return bool
+	 * @param Configuration $configuration
+	 * @param Services $services
 	 */
-	public function isInitialized()
+	public function initializeDIC(Configuration $configuration = null, Services $services = null)
 	{
-		return $this->initialized;
+		if ($this->isInitialized()) { return; }
+		if (isset($configuration)) { $configuration->toDIC($this); }
+		if (isset($configuration, $services)) { $services->toDIC($this); }
 	}
 
 	/**
-	 * Set DIC state to initialized
+	 * Initialize DIC
 	 */
 	public function setInitialized()
 	{
@@ -55,33 +66,95 @@ class DIC
 	}
 
 	/**
-	 * Get specified indexed item from DIC
-	 * @param string $key
+	 * Check if DIC is already initialized
 	 *
-	 * @return mixed|null
+	 * @return bool
 	 */
-	public function get(string $key)
+	public function isInitialized(): bool
 	{
-		return isset($this->dic[$key]) ? $this->dic[$key] : null;
+		return $this->initialized;
 	}
 
 	/**
-	 * Set specified indexed itme info DIC
+	 * Get specified indexed item from DIC
 	 * @param string $key
-	 * @param $item
+	 *
+	 * @return mixed
+	 */
+	public function get(string $key)
+	{
+		return isset($this->parameters[$key]) ? $this->parameters[$key] : null;
+	}
+
+	/**
+	 * Set specified indexed item into DIC
+	 * @param string $key
+	 * @param mixed $item
 	 */
 	public function set(string $key, $item)
 	{
-		$this->dic[$key] = $item;
+		$this->parameters[$key] = $item;
+	}
+
+	/**
+	 * Get specified indexed service from DIC
+	 *
+	 * @param string $name
+	 *
+	 * @return mixed
+	 */
+	public function getService(string $name)
+	{
+		return isset($this->services[ $name]) ? $this->services[ $name] : null;
+	}
+
+	/**
+	 * Check if service exists
+	 *
+	 * @param string $name
+	 *
+	 * @return bool
+	 */
+	private function hasService(string $name): bool
+	{
+		return isset($this->services[$name]);
+	}
+
+	/**
+	 * Set specified indexed service into DIC
+	 *
+	 * @param string $name
+	 * @param $service
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function addService(string $name, $service)
+	{
+		if ($this->hasService($name)) {
+			throw new InvalidArgumentException('Service ' . $name . ' already exists.');
+		} elseif (!is_object($service)) {
+			throw new InvalidArgumentException(sprintf('Service %s must be an object, %s given.', $name, gettype($service)));
+		}
+		$this->services[ $name] = $service;
+	}
+
+	/**
+	 * Remove specified indexed service from DIC
+	 *
+	 * @param string $name
+	 */
+	public function removeService(string $name)
+	{
+		unset($this->services[$name]);
 	}
 
 	/**
 	 * Faster access for FlashMessages object
 	 *
-	 * @return FlashMessages
+	 * @return FlashMessages|null
 	 */
-	public function getFlashBag(): FlashMessages
+	public function getFlashBag()
 	{
-		return $this->get('flashBag');
+		return $this->getService('flashBag');
 	}
 }

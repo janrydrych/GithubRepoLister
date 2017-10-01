@@ -14,7 +14,6 @@ use GRL\Storage\DataStorageInterface;
  */
 class LogPurgePage extends Page
 {
-
 	/**
 	 * Render search log purge form
 	 *
@@ -24,7 +23,7 @@ class LogPurgePage extends Page
 	 */
 	public function renderPurgeForm($hours = null): string
 	{
-		$html = '<div class="container"><form action="'.$_SERVER["PHP_SELF"].'" method="post"><div>';
+		$html = '<div class="container"><form action="'.$_SERVER['PHP_SELF'].'" method="post"><div>';
 		$html .= '<label><b>Delete logs older than</b></label> ';
 		$html .= '<input type="number" placeholder="Enter hours" name="hours" required value="'.$hours.'">';
 		$html .= '<button type="submit">Execute!</button>';
@@ -36,19 +35,17 @@ class LogPurgePage extends Page
 	/**
 	 * Render content for authenticated users
 	 *
-	 * @param $requestVars
-	 *
 	 * @return string
 	 */
-	public function renderAuthenticatedContent($requestVars = null): string
+	public function renderAuthenticatedContent(): string
 	{
 		/* @var Auth $authProvider */
-		$authProvider = $this->getDIC()->get('authProvider');
+		$authProvider = $this->getDIC()->getService('authProvider');
 		$html = '<h2>Authenticated as: '.$authProvider->getUsername().'</h2>';
 		$html .= $this->renderPurgeForm();
 		$html .= '<div class="container">';
 		/* @var DataStorageInterface $dataStorage */
-		$dataStorage = $this->getDIC()->get('dataStorage');
+		$dataStorage = $this->getDIC()->getService('dataStorage');
 		$recordCount = $dataStorage->countSearchLogs();
 		switch($recordCount){
 			case 0: $html .= 'Currently there are no records in the storage.'; break;
@@ -69,7 +66,7 @@ class LogPurgePage extends Page
 	 */
 	public function renderAnonymousContent($requestVars = null): string
 	{
-		$username = (isset($requestVars['username'])) ? $requestVars['username'] : null;
+		$username = isset($requestVars['username']) ? $requestVars['username'] : null;
 		$html = $this->renderLoginForm($username);
 
 		return $html;

@@ -7,6 +7,7 @@ namespace GRL\Storage;
 use \PDO;
 use \DateTime;
 use \Exception;
+
 /**
  * @author Jan Rydrych <jan.rydrych@gmail.com>
  */
@@ -27,7 +28,7 @@ interface DataStorageInterface
 	 *
 	 * @return bool
 	 */
-	public function saveSearchEvent(DateTime $dateTime, string $uri, string $ipAddress);
+	public function saveSearchEvent(DateTime $dateTime, string $uri, string $ipAddress): bool;
 
 	/**
 	 * Count search logs
@@ -53,5 +54,5 @@ interface DataStorageInterface
 	 *
 	 * @return bool
 	 */
-	public function deleteSearchLogs(int $hoursAgo);
+	public function deleteSearchLogs(int $hoursAgo): bool;
 }

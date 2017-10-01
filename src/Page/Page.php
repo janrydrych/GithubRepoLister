@@ -1,14 +1,6 @@
 <?php
 /**
  * This file is part of the GithubRepoLister project
- * Copyright (c) Jan Rydrych <jan.rydrych@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
-/**
- * This file is part of the GithubRepoLister project
  */
 namespace GRL\Page;
 
@@ -27,16 +19,46 @@ use GRL\Util\Paginator;
 abstract class Page extends Base
 {
 	/**
-	 * Render base page template
-	 *
+	 * @var string
+	 */
+	private $htmlContent;
+
+	/**
 	 * @param $htmlContent
 	 */
-	public function renderView($htmlContent)
+	public function setHtmlContent($htmlContent)
+	{
+		$this->htmlContent = $htmlContent;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getHtmlContent(): string
+	{
+		return $this->htmlContent;
+	}
+
+	/**
+	 * @param $htmlContent
+	 *
+	 * @return $this
+	 */
+	public function addHtmlContent($htmlContent): Page
+	{
+		$this->htmlContent .= $htmlContent;
+		return $this;
+	}
+
+	/**
+	 * Render base page template
+	 */
+	public function renderView()
 	{
 		$flashBag = $this->getDIC()->getFlashBag();
 		echo '<html><head><link rel="stylesheet" href="styles/style.css" /></head><body>';
-		if ($flashBag->hasMessages()) echo $flashBag->getMessages();
-		echo $htmlContent;
+		if ($flashBag->hasMessages()) { echo $flashBag->getMessages(); }
+		echo $this->htmlContent;
 		echo '</body></html>';
 	}
 
@@ -49,7 +71,7 @@ abstract class Page extends Base
 	 */
 	public function renderLoginForm($username = null): string
 	{
-		$html = '<div class="container"><form action="'.$_SERVER["PHP_SELF"].'" method="post"><div>';
+		$html = '<div class="container"><form action="'.$_SERVER['PHP_SELF'].'" method="post"><div>';
 		$html .= '<label><b>Username</b></label> ';
 		$html .= '<input type="text" placeholder="Enter Username" name="username" required value="'.$username.'">';
 		$html .= '<label><b>Password</b></label> ';
@@ -70,7 +92,7 @@ abstract class Page extends Base
 	public function renderPagination(string $url): string
 	{
 		/* @var Paginator $paginator */
-		$paginator = $this->getDIC()->get('paginator');
+		$paginator = $this->getDIC()->getService('paginator');
 		$html = '<div class="container center"><div class="pagination">';
 		$html .= '<a href="'.$url.'">&laquo;</a>';
 
@@ -98,11 +120,11 @@ abstract class Page extends Base
 	 *
 	 * @return bool
 	 */
-	public function isNotEmpty()
+	public function isNotEmpty(): bool
 	{
 		$arguments = func_get_args();
 		foreach ($arguments as $argument) {
-			if (empty($argument)) return false;
+			if (empty($argument)) { return false; }
 		}
 
 		return true;
@@ -117,13 +139,13 @@ abstract class Page extends Base
 	 *
 	 * @return bool
 	 */
-	public function authenticate($username, $password)
+	public function authenticate($username, $password): bool
 	{
-		if (!isset($username) || !isset($password)) return false;
+		if (empty($username) || empty($password)) { return false; }
 
 		try {
 			/* @var Auth $authProvider */
-			$authProvider = $this->getDIC()->get('authProvider');
+			$authProvider = $this->getDIC()->getService('authProvider');
 			$authProvider->loginWithUsername(
 				$username,
 				$password,

@@ -24,13 +24,15 @@ class SearchLogPage extends Page
 	public function renderSearchLogs(array $searchLogs): string
 	{
 		/* @var Paginator $paginator */
-		$paginator = $this->getDIC()->get('paginator');
+		$paginator = $this->getDIC()->getService('paginator');
 		$firstItemShowed = $paginator->getOffset() + 1;
 		$lastItemShowed = $paginator->getOffset() + $paginator->getItemCountForCurrentPage();
 
 		$html = '<div class="container"><table><caption>Search logs';
-		$html .= ' - page '.$paginator->getCurrentPage();
-		$html .= ' - items '.$firstItemShowed.' to '.$lastItemShowed.' of '.$paginator->getItemCount();
+		if ($paginator->getItemCount() > 0) {
+			$html .= ' - page ' . $paginator->getCurrentPage();
+			$html .= ' - items ' . $firstItemShowed . ' to ' . $lastItemShowed . ' of ' . $paginator->getItemCount();
+		}
 		$html .= '</caption>';
 
 		if (!empty($searchLogs)) {

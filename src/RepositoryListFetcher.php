@@ -6,6 +6,7 @@ namespace GRL;
 
 use Exception;
 use Github\Client;
+use Github\Exception\InvalidArgumentException;
 use Github\ResultPager;
 
 /**
@@ -57,12 +58,14 @@ class RepositoryListFetcher
 	/**
 	 * Authenticate to Github
 	 *
-	 * @param string $gitUsername
+	 * @param string $username
 	 * @param string $password
+	 *
+	 * @throws InvalidArgumentException
 	 */
-	public function authenticate(string $gitUsername, string $password)
+	private function authenticate(string $username, string $password)
 	{
-		$this->ghClient->authenticate($gitUsername, $password);
+		$this->ghClient->authenticate($username, $password);
 	}
 
 
@@ -70,17 +73,17 @@ class RepositoryListFetcher
 	 * Fetch user public repositories by Github user-repo API
 	 * @link https://api.github.com/users/%USERNAME%/repos?type=owner&sort=created&direction=asc
 	 *
-	 * @param string $gitUsername
+	 * @param string $username
 	 *
-	 * @return array|string
+	 * @return array
 	 */
-	private function fetchUsersPublicRepositories(string $gitUsername)
+	private function fetchUsersPublicRepositories(string $username): array
 	{
 		$repositories = $this->ghResultPager->fetchAll(
 			$this->ghClient->user(),
 			'repositories',
 			array(
-				$gitUsername,
+				$username,
 				'owner',
 				'created',
 				'desc'
@@ -98,10 +101,9 @@ class RepositoryListFetcher
 	 *
 	 * @return array
 	 */
-	private function filterRepositoriesData(array $repositories, array $desiredRepositoryFields = null)
+	private function filterRepositoriesData(array $repositories, array $desiredRepositoryFields = null): array
 	{
-		$desiredRepositoryFields = $desiredRepositoryFields ?: self::DESIRED_REPOSITORY_FIELDS;
-
+		$desiredRepositoryFields = $desiredRepositoryFields ?: $this::DESIRED_REPOSITORY_FIELDS;
 		foreach ($repositories as &$repo) {
 			$repo = array_filter(
 				$repo,
@@ -117,39 +119,40 @@ class RepositoryListFetcher
 	}
 
 	/**
-	 * Get all repositories for specified user
+	 * Get all repositories for specified Github user
 	 *
-	 * @param string $gitUsername
+	 * @param string $username
+	 * @param array|null $desiredRepositoryFields
 	 *
 	 * @return array
 	 */
-	public function getAllRepositoriesForUser(string $gitUsername)
+	private function getAllRepositoriesForUser(string $username, array $desiredRepositoryFields = null): array
 	{
-		$repositories = $this->fetchUsersPublicRepositories($gitUsername);
-
-		return $this->filterRepositoriesData($repositories);
+		$repositories = $this->fetchUsersPublicRepositories($username);
+		return $this->filterRepositoriesData($repositories, $desiredRepositoryFields);
 	}
 
 
 	/**
-	 * Get repositories data
+	 * Get repositories data for specified Github user account
+	 *
 	 * @param $username
 	 * @param $password
+	 * @param array|null $desiredRepositoryFields
 	 *
 	 * @return array
 	 */
-	public function getRepositories($username, $password): array
+	public function getRepositoriesData($username, $password, array $desiredRepositoryFields = null): array
 	{
-		if (!isset($username) || !isset($password)) return array(false, 'Invalid Credentials');
+		if (!isset($username, $password)) { return array(false, 'Invalid Credentials'); }
 
 		try {
 			$this->authenticate($username, $password);
-			$repositories = $this->getAllRepositoriesForUser($username);
+			$repositories = $this->getAllRepositoriesForUser($username, $desiredRepositoryFields);
 		} catch (Exception $e) {
 			return array(false, $e->getMessage());
 		}
 
 		return array(true, $repositories);
 	}
-
 }

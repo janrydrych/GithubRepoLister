@@ -2,7 +2,6 @@
 /**
  * This file is part of the GithubRepoLister project
  */
-
 namespace GRL\Util;
 
 use Delight\Cookie\Session;
@@ -52,12 +51,12 @@ class FlashMessages
 	 * Add a flash message to the session data
 	 *
 	 * @param  string  $message
-	 * @return object|boolean
+	 * @return $this|boolean
 	 */
 	public function add(string $message)
 	{
 		// Make sure a message was passed
-		if (!isset($message[0])) return false;
+		if (!isset($message[0])) { return false; }
 
 		// Add the message to the session data
 		$bag = Session::get(self::MESSAGE_BAG_NAME);
@@ -73,14 +72,14 @@ class FlashMessages
 	 * @return string
 	 *
 	 */
-	public function getMessages()
+	public function getMessages(): string
 	{
-		if (!Session::has(self::MESSAGE_BAG_NAME)) return false;
+		if (!Session::has(self::MESSAGE_BAG_NAME)) { return false; }
 		$output = '';
-		foreach (Session::get(self::MESSAGE_BAG_NAME) as $msg) {
+		$messageBas = (array) Session::get(self::MESSAGE_BAG_NAME);
+		foreach ($messageBas as $msg) {
 			$output .= $this->formatMessage($msg);
 		}
-
 		$this->clearAll();
 		return $output;
 	}
@@ -88,10 +87,10 @@ class FlashMessages
 	/**
 	 * See if there are any queued message
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
-	public function hasMessages() {
-
+	public function hasMessages(): bool
+	{
 		return (!empty(Session::get(self::MESSAGE_BAG_NAME))) ? true : false;
 	}
 
@@ -102,7 +101,7 @@ class FlashMessages
 	 *
 	 * @return string
 	 */
-	private function formatMessage(string $message)
+	private function formatMessage(string $message): string
 	{
 		return '<div class="flash-msg">' .
 		       $this->messagePrefix .
@@ -113,7 +112,7 @@ class FlashMessages
 	/**
 	 * Clear the messages from the session
 	 *
-	 * @return object
+	 * @return $this
 	 */
 	private function clearAll()
 	{
