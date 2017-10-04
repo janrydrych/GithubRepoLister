@@ -56,20 +56,6 @@ class RepositoryListFetcher
 	}
 
 	/**
-	 * Authenticate to Github
-	 *
-	 * @param string $username
-	 * @param string $password
-	 *
-	 * @throws InvalidArgumentException
-	 */
-	private function authenticate(string $username, string $password)
-	{
-		$this->ghClient->authenticate($username, $password);
-	}
-
-
-	/**
 	 * Fetch user public repositories by Github user-repo API
 	 * @link https://api.github.com/users/%USERNAME%/repos?type=owner&sort=created&direction=asc
 	 *
@@ -147,9 +133,9 @@ class RepositoryListFetcher
 		if (!isset($username, $password)) { return array(false, 'Invalid Credentials'); }
 
 		try {
-			$this->authenticate($username, $password);
+			$this->ghClient->authenticate($username, $password);
 			$repositories = $this->getAllRepositoriesForUser($username, $desiredRepositoryFields);
-		} catch (Exception $e) {
+		} catch(InvalidArgumentException $e) {
 			return array(false, $e->getMessage());
 		}
 

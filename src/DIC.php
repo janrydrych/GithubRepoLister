@@ -53,14 +53,19 @@ class DIC
 	public function initializeDIC(Configuration $configuration = null, Services $services = null)
 	{
 		if ($this->isInitialized()) { return; }
-		if (isset($configuration)) { $configuration->toDIC($this); }
-		if (isset($configuration, $services)) { $services->toDIC($this); }
+		if (isset($configuration)) {
+			$configuration->toDIC($this);
+			if (isset($services)) {
+				$services->toDIC($this);
+			}
+			$this->setInitialized();
+		}
 	}
 
 	/**
 	 * Initialize DIC
 	 */
-	public function setInitialized()
+	private function setInitialized()
 	{
 		$this->initialized = true;
 	}
@@ -102,10 +107,16 @@ class DIC
 	 * @param string $name
 	 *
 	 * @return mixed
+	 *
+	 * @throws InvalidArgumentException
 	 */
 	public function getService(string $name)
 	{
-		return isset($this->services[ $name]) ? $this->services[ $name] : null;
+		if ($this->hasService($name)) {
+			return $this->services[ $name ];
+		} else {
+			throw new InvalidArgumentException(sprintf('Service %s does not exist.', $name));
+		}
 	}
 
 	/**
@@ -152,6 +163,8 @@ class DIC
 	 * Faster access for FlashMessages object
 	 *
 	 * @return FlashMessages|null
+	 *
+	 * @throws InvalidArgumentException
 	 */
 	public function getFlashBag()
 	{

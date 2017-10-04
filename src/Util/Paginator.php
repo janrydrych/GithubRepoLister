@@ -48,8 +48,8 @@ class Paginator
     */
     public function __construct(int $itemsPerPage = null, int $stepsAroundCurrentPage = null)
     {
-    	isset($itemsPerPage) ? $this->setItemsPerPage($itemsPerPage) : $this->itemsPerPage = self::DEFAULT_ITEMS_PER_PAGE;
-	    isset($stepsAroundCurrentPage) ? $this->setStepsAroundCurrentPage($stepsAroundCurrentPage) : $this->stepsAroundCurrentPage = self::DEFAULT_STEPS_AROUND_CURRENT_PAGE;
+	    (null !== $itemsPerPage) ? $this->setItemsPerPage($itemsPerPage) : $this->itemsPerPage = self::DEFAULT_ITEMS_PER_PAGE;
+	    (null !== $stepsAroundCurrentPage) ? $this->setStepsAroundCurrentPage($stepsAroundCurrentPage) : $this->stepsAroundCurrentPage = self::DEFAULT_STEPS_AROUND_CURRENT_PAGE;
     }
 
     /**
@@ -184,9 +184,9 @@ class Paginator
     /**
      * Returns previous page number.
      *
-     * @return int
+     * @return int|null
      */
-    public function getPreviousPage(): int
+    public function getPreviousPage()
     {
         if ($this->itemCount === null) {
             return null;
@@ -198,9 +198,9 @@ class Paginator
     /**
      * Returns next page number.
      *
-     * @return int
+     * @return int|null
      */
-    public function getNextPage(): int
+    public function getNextPage()
     {
         if ($this->itemCount === null) {
             return null;
@@ -212,9 +212,9 @@ class Paginator
     /**
      * Returns last page number.
      *
-     * @return int
+     * @return int|null
      */
-    public function getLastPage(): int
+    public function getLastPage()
     {
         if ($this->itemCount === null) {
             return null;
@@ -265,9 +265,9 @@ class Paginator
     /**
      * Returns the total number of pages.
      *
-     * @return int
+     * @return int|null
      */
-    public function getPageCount(): int
+    public function getPageCount()
     {
         if ($this->itemCount === null) {
             return null;
@@ -289,9 +289,9 @@ class Paginator
     /**
      * Returns the absolute index of the first item on current page in countdown paging.
      *
-     * @return int
+     * @return int|null
      */
-    public function getCountdownOffset(): int
+    public function getCountdownOffset()
     {
         if ($this->itemCount === null) {
             return null;
@@ -317,9 +317,9 @@ class Paginator
     /**
      * Returns array of steps
      *
-     * @return array
+     * @return array|null
      */
-    public function getSteps(): array
+    public function getSteps()
     {
         if ($this->getPageCount() < 2) {
             return null;
