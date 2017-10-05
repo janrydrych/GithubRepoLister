@@ -126,7 +126,7 @@ class DIC
 	 *
 	 * @return bool
 	 */
-	private function hasService(string $name): bool
+	public function hasService(string $name): bool
 	{
 		return isset($this->services[$name]);
 	}
@@ -163,11 +163,13 @@ class DIC
 	 * Faster access for FlashMessages object
 	 *
 	 * @return FlashMessages|null
-	 *
-	 * @throws InvalidArgumentException
 	 */
 	public function getFlashBag()
 	{
-		return $this->getService('flashBag');
+		try {
+			return $this->getService('flashBag');
+		} catch(InvalidArgumentException $e) {
+			return null;
+		}
 	}
 }

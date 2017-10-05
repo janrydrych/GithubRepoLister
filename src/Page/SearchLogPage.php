@@ -5,6 +5,7 @@
 namespace GRL\Page;
 
 use GRL\Util\Paginator;
+use InvalidArgumentException;
 
 
 /**
@@ -23,8 +24,12 @@ class SearchLogPage extends Page
 	 */
 	public function renderSearchLogs(array $searchLogs): string
 	{
-		/* @var Paginator $paginator */
-		$paginator = $this->getDIC()->getService('paginator');
+		try {
+			/* @var Paginator $paginator */
+			$paginator = $this->getDIC()->getService('paginator');
+		} catch (InvalidArgumentException $e) {
+			return $this->renderErrorContainer($e->getMessage());
+		}
 		$firstItemShowed = $paginator->getOffset() + 1;
 		$lastItemShowed = $paginator->getOffset() + $paginator->getItemCountForCurrentPage();
 

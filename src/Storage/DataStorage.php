@@ -34,20 +34,8 @@ class DataStorage implements DataStorageInterface
 
 		$result = $this->initSearchLogTable();
 		if ($result === false) {
-			throw new RuntimeException('Searches table initialization error');
+			throw new RuntimeException('Searches log table initialization error');
 		}
-	}
-
-	/**
-	 * Check if table exists in the storage
-	 * @param string $name
-	 *
-	 * @return bool
-	 */
-	private function tableExists(string $name): bool
-	{
-		$result = $this->pdo->query("SELECT 1 FROM ".$name." LIMIT 1");
-		return $result !== false;
 	}
 
 	/**
@@ -56,9 +44,7 @@ class DataStorage implements DataStorageInterface
 	 */
 	private function initSearchLogTable(): bool
 	{
-		if ($this->tableExists(self::SEARCH_LOG_TABLE_NAME)) { return true; }
-
-		$result = $this->pdo->query("CREATE TABLE ".self::SEARCH_LOG_TABLE_NAME." (datetime TEXT NOT NULL, uri TEXT NOT NULL, ip_address TEXT)");
+		$result = $this->pdo->query("CREATE TABLE IF NOT EXISTS ".self::SEARCH_LOG_TABLE_NAME." (datetime TEXT NOT NULL, uri TEXT NOT NULL, ip_address TEXT)");
 		if ($result === false) { return $result; }
 		$result = $this->pdo->query("CREATE INDEX idx_datetime ON ".self::SEARCH_LOG_TABLE_NAME."(datetime)");
 		return $result !== false;
@@ -106,7 +92,7 @@ class DataStorage implements DataStorageInterface
 	 */
 	public function getSearchLogs(int $limit, int $offset)
 	{
-		$sth = $this->pdo->prepare("SELECT * FROM ".self::SEARCH_LOG_TABLE_NAME." ORDER BY datetime DESC LIMIT :limit OFFSET :offset");
+		$sth = $this->pdo->prepare("SELECT datetime, uri, ip_address FROM ".self::SEARCH_LOG_TABLE_NAME." ORDER BY datetime DESC LIMIT :limit OFFSET :offset");
 		$sth->bindParam(':limit', $limit, PDO::PARAM_INT);
 		$sth->bindParam(':offset', $offset, PDO::PARAM_INT);
         $result = $sth->execute();

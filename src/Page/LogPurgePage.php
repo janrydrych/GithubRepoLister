@@ -6,6 +6,7 @@ namespace GRL\Page;
 
 use Delight\Auth\Auth;
 use GRL\Storage\DataStorageInterface;
+use InvalidArgumentException;
 
 /**
  * Log purge page class
@@ -39,20 +40,36 @@ class LogPurgePage extends Page
 	 */
 	public function renderAuthenticatedContent(): string
 	{
-		/* @var Auth $authProvider */
-		$authProvider = $this->getDIC()->getService('authProvider');
-		$html = '<h2>Authenticated as: '.$authProvider->getUsername().'</h2>';
-		$html .= $this->renderPurgeForm();
-		$html .= '<div class="container">';
-		/* @var DataStorageInterface $dataStorage */
-		$dataStorage = $this->getDIC()->getService('dataStorage');
-		$recordCount = $dataStorage->countSearchLogs();
-		switch($recordCount){
-			case 0: $html .= 'Currently there are no records in the storage.'; break;
-			case 1: $html .= 'Currently there is '.$recordCount.' record in the storage.'; break;
-			default: $html .= 'Currently there are '.$recordCount.' records in the storage.';
+		try {
+			/* @var Auth $authProvider */
+			$authProvider = $this->getDIC()
+			                     ->getService('authProvider');
+			/* @var DataStorageInterface $dataStorage */
+			$dataStorage = $this->getDIC()
+			                    ->getService('dataStorage');
+		} catch (InvalidArgumentException $e) {
+			return $this->renderErrorContainer($e->getMessage());
 		}
-		$html .= '</div>';
+		$html = '';
+		if ($authProvider) {
+			$html .= '<h2>Authenticated as: ' . $authProvider->getUsername() . '</h2>';
+			$html .= $this->renderPurgeForm();
+		}
+		if ($dataStorage) {
+			$html .= '<div class="container">';
+			$recordCount = $dataStorage->countSearchLogs();
+			switch ($recordCount) {
+				case 0:
+					$html .= 'Currently there are no records in the storage.';
+					break;
+				case 1:
+					$html .= 'Currently there is ' . $recordCount . ' record in the storage.';
+					break;
+				default:
+					$html .= 'Currently there are ' . $recordCount . ' records in the storage.';
+			}
+			$html .= '</div>';
+		}
 
 		return $html;
 	}

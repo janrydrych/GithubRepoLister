@@ -26,7 +26,7 @@ $repoListPage = new RepoListPage(new DIC(new Configuration(), new Services()));
 $repoListPage->addHtmlContent('<h3>Enter your Github login credentials</h3>')
              ->addHtmlContent($repoListPage->renderLoginForm($_POST['username']));
 
-$isLoginPossible = $repoListPage->isNotEmpty($_POST['username'], $_POST['password']);
+$isLoginPossible = !$repoListPage->isAnyArgumentEmpty($_POST['username'], $_POST['password']);
 
 if ($isLoginPossible) {
 	/* @var RepositoryListFetcher $rlf */

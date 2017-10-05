@@ -60,11 +60,15 @@ class RepositoryListFetcherTest extends TestCase
 		$resultPagerMock = $this->mockResultPager($clientMock, $testJsonData);
 
 		$this->RLF = new RepositoryListFetcher($clientMock, $resultPagerMock);
+
+		parent::setUp();
 	}
 
 	protected function tearDown()
 	{
-		$this->RLF = null;
+		unset($this->RLF);
+
+		parent::tearDown();
 	}
 
 	public function testGetRepositoriesDataWithNullCredentials()

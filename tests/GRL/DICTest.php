@@ -168,12 +168,21 @@ class DICTest extends TestCase
 		$this->assertNull($DIC->get('k6'), '->get() must return null for nonexistent parameter');
 	}
 
-	public function testAddGetRemoveService()
+	public function testAddHasGetService()
+	{
+		$DIC = $this->createDIC();
+		$service = new \stdClass();
+		$this->assertFalse($DIC->hasService('s1'), '->hasService() must return false when service is not set');
+		$DIC->addService('s1', $service);
+		$this->assertTrue($DIC->hasService('s1'), '->hasService() must return true when service is set');
+		$this->assertSame($service, $DIC->getService('s1'), '->addService() must set a new service');
+	}
+
+	public function testRemoveService()
 	{
 		$DIC = $this->createDIC();
 		$service = new \stdClass();
 		$DIC->addService('s1', $service);
-		$this->assertSame($service, $DIC->getService('s1'), '->addService() must set a new service');
 
 		$DIC->removeService('s1');
 		try {
@@ -257,29 +266,15 @@ class DICTest extends TestCase
 		}
 	}
 
-	public function testGetFlashBagReturnsFlashMessagesObject()
+	public function testGetFlashBag()
 	{
-		$flashBag = new FlashMessages();
 		$DIC = $this->createDIC();
+		$this->assertNull($DIC->getFlashBag(), '->getFlashBag() must return null when service is not set');
+
+		$flashBag = new FlashMessages();
 		$DIC->addService('flashBag', $flashBag);
 		$this->assertInstanceOf(FlashMessages::class,
 		                        $DIC->getFlashBag(),
 		                        '->getFlashBag() must return instance of FlashMessages class');
-	}
-
-	public function testGetFlashBagThrowsExceptionWhenServiceIsNotSet()
-	{
-		$DIC = $this->createDIC();
-		try {
-			$DIC->getFlashBag();
-			$this->fail('->getFlashBag() must throw an \InvalidArgumentException if the flashBag service does not exist');
-		} catch (\Exception $e) {
-			$this->assertInstanceOf(\InvalidArgumentException::class,
-			                        $e,
-			                        '->getFlashBag() must throw an \InvalidArgumentException if the flashBag service does not exist');
-			$this->assertEquals('Service flashBag does not exist.',
-			                    $e->getMessage(),
-			                    '->getFlashBag() must throw an \InvalidArgumentException if the flashBag service does not exist');
-		}
 	}
 }

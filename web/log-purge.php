@@ -27,7 +27,7 @@ $authProvider = $logPurgePage->getDIC()->getService('authProvider');
 
 if ($authProvider->isLoggedIn()) {
 	//Authenticated scope
-	if ($logPurgePage->isNotEmpty($_POST['hours'])) {
+	if (!$logPurgePage->isAnyArgumentEmpty($_POST['hours'])) {
 		/* @var DataStorageInterface $dataStorage */
 		$dataStorage = $logPurgePage->getDIC()->getService('dataStorage');
 		$dataStorage->deleteSearchLogs($_POST['hours']);
