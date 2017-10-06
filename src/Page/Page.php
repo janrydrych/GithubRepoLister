@@ -147,7 +147,7 @@ abstract class Page extends Base
 	{
 		$arguments = func_get_args();
 		foreach ($arguments as $argument) {
-			if (empty($argument) && $argument !== 0) { return true; }
+			if (empty($argument) && $argument !== 0 && $argument !== '0') { return true; }
 		}
 
 		return false;

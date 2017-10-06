@@ -108,13 +108,13 @@ class RepositoryListFetcherTest extends TestCase
 	public function testGetRepositoriesDataWithAuthenticateException()
 	{
 		$clientMock = $this->mockClient();
-		$clientMock->method('authenticate')->willThrowException(new InvalidArgumentException('You need to specify authentication method!'));
+		$clientMock->method('authenticate')
+		           ->willThrowException(new InvalidArgumentException('You need to specify authentication method!'));
 		$resultPagerMock = $this->mockResultPager($clientMock, '');
-		$RLF = new RepositoryListFetcher($clientMock, $resultPagerMock);
+		$RLF             = new RepositoryListFetcher($clientMock, $resultPagerMock);
 
 		$result = $RLF->getRepositoriesData('username', 'password');
-		$this->assertSame(array(false, 'You need to specify authentication method!'),
-		                  $result,
-		                  '->getRepositoriesData() must return false response for GithubClient->authenticate() exception');
+		$this->assertFalse($result[0],
+		                   '->getRepositoriesData() must return false response for GithubClient->authenticate() exception');
 	}
 }

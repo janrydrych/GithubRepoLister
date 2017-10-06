@@ -45,9 +45,9 @@ class DataStorage implements DataStorageInterface
 	private function initSearchLogTable(): bool
 	{
 		$result = $this->pdo->query("CREATE TABLE IF NOT EXISTS ".self::SEARCH_LOG_TABLE_NAME." (datetime TEXT NOT NULL, uri TEXT NOT NULL, ip_address TEXT)");
-		if ($result === false) { return $result; }
-		$result = $this->pdo->query("CREATE INDEX idx_datetime ON ".self::SEARCH_LOG_TABLE_NAME."(datetime)");
-		return $result !== false;
+		if (!$result || $result === false) { return false; }
+		$result = $this->pdo->query("CREATE INDEX IF NOT EXISTS idx_datetime ON ".self::SEARCH_LOG_TABLE_NAME."(datetime)");
+		return !(!$result || $result === false);
 	}
 
 	/**

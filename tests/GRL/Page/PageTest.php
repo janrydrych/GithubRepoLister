@@ -157,8 +157,9 @@ class PageTest extends TestCase
 		$testArg1 = 0;
 		$testArg2 = 'a';
 		$testArg3 = 0.8;
+		$testArg4 = '0';
 		$this->assertFalse($this->page->isAnyArgumentEmpty($testArg1), '->isAnyArgumentEmpty() must return false for a non empty argument');
-		$this->assertFalse($this->page->isAnyArgumentEmpty($testArg1, $testArg2, $testArg3), '->isAnyArgumentEmpty() must return false for multiple non empty arguments');
+		$this->assertFalse($this->page->isAnyArgumentEmpty($testArg1, $testArg2, $testArg3, $testArg4), '->isAnyArgumentEmpty() must return false for multiple non empty arguments');
 
 		$testArg1 = '';
 		$testArg2 = ' ';

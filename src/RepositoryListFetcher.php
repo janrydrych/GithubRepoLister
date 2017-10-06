@@ -6,7 +6,6 @@ namespace GRL;
 
 use Exception;
 use Github\Client;
-use Github\Exception\InvalidArgumentException;
 use Github\ResultPager;
 
 /**
@@ -135,7 +134,7 @@ class RepositoryListFetcher
 		try {
 			$this->ghClient->authenticate($username, $password);
 			$repositories = $this->getAllRepositoriesForUser($username, $desiredRepositoryFields);
-		} catch(InvalidArgumentException $e) {
+		} catch(Exception $e) {
 			return array(false, $e->getMessage());
 		}
 
